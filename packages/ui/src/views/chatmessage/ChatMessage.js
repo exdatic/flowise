@@ -340,15 +340,19 @@ export const ChatMessage = ({ open, chatflowid, isDialog }) => {
                                                 <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
                                                     {removeDuplicateURL(message).map((source, index) => {
                                                         const URL = isValidURL(source.metadata.source)
+                                                        let label
+                                                        if (source.metadata.title) {
+                                                            label = source.metadata.title
+                                                        } else if (URL) {
+                                                            label = `${URL.pathname.substring(0, 15)}...`
+                                                        } else {
+                                                            label = `${source.pageContent.substring(0, 15)}...`
+                                                        }
                                                         return (
                                                             <Chip
                                                                 size='small'
                                                                 key={index}
-                                                                label={
-                                                                    URL
-                                                                        ? `${URL.pathname.substring(0, 15)}...`
-                                                                        : `${source.pageContent.substring(0, 15)}...`
-                                                                }
+                                                                label={label}
                                                                 component='a'
                                                                 sx={{ mr: 1, mb: 1 }}
                                                                 variant='outlined'
