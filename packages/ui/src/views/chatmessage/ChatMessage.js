@@ -344,7 +344,11 @@ export const ChatMessage = ({ open, chatflowid, isDialog }) => {
                                                         if (source.metadata.title) {
                                                             label = source.metadata.title
                                                         } else if (URL) {
-                                                            label = `${URL.pathname.substring(0, 15)}...`
+                                                            if (URL.pathname.substring(0, 15) === '/') {
+                                                                label = URL.host
+                                                            } else {
+                                                                label = `${URL.pathname.substring(0, 15)}...`
+                                                            }
                                                         } else {
                                                             label = `${source.pageContent.substring(0, 15)}...`
                                                         }
