@@ -1,6 +1,7 @@
+import { z } from 'zod'
 import { CallbackManagerForToolRun } from 'langchain/callbacks'
 import { BaseRetriever } from 'langchain/schema/retriever'
-import { DynamicTool, DynamicToolInput } from 'langchain/tools'
+import { DynamicStructuredTool, DynamicStructuredToolInput } from 'langchain/tools'
 import { Document } from 'langchain/document'
 
 export const isValidURL = (url: string) => {
@@ -11,8 +12,8 @@ export const isValidURL = (url: string) => {
     }
 }
 
-export function createRetrieverWithSourcesTool(retriever: BaseRetriever, input: Omit<DynamicToolInput, 'func'>) {
-    const getContentWithSource = (source: Document) => {
+export function createRetrieverWithSourcesTool(retriever: BaseRetriever, input: Omit<DynamicStructuredToolInput, 'func' | 'schema'>) {
+    const pageContentWithSource = (source: Document) => {
         const content = source.pageContent
         const url = isValidURL(source.metadata.source)
         if (url) {
@@ -25,9 +26,12 @@ export function createRetrieverWithSourcesTool(retriever: BaseRetriever, input: 
         }
         return content
     }
-    const func = async (input: string, runManager?: CallbackManagerForToolRun) => {
+    const func = async ({ input }: { input: string }, runManager?: CallbackManagerForToolRun) => {
         const docs = await retriever.getRelevantDocuments(input, runManager?.getChild('retriever'))
-        return docs.map((doc) => getContentWithSource(doc)).join('\n\n')
+        return docs.map((doc) => pageContentWithSource(doc)).join('\n\n')
     }
-    return new DynamicTool({ ...input, func })
+    const schema = z.object({
+        input: z.string().describe('Natural language query used as input to the retriever')
+    })
+    return new DynamicStructuredTool({ ...input, func, schema })
 }
