@@ -17,7 +17,7 @@ class RetrieverWithSources_Tools implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Retriever With Sources Tool'
+        this.label = 'Retriever with Sources Tool'
         this.name = 'retrieverWithSourcesTool'
         this.version = 1.0
         this.type = 'RetrieverTool'
