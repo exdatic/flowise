@@ -38,6 +38,13 @@ class ConversationalRetrievalAgentToolkit_Agents implements INode {
                 type: 'ChatOpenAI'
             },
             {
+                label: 'Remember Intermediate Steps',
+                name: 'rememberIntermediateSteps',
+                type: 'boolean',
+                optional: true,
+                default: true
+            },
+            {
                 label: 'System Message',
                 name: 'systemMessage',
                 type: 'string',
@@ -51,6 +58,7 @@ class ConversationalRetrievalAgentToolkit_Agents implements INode {
     async init(nodeData: INodeData): Promise<any> {
         const model = nodeData.inputs?.model
         const systemMessage = nodeData.inputs?.systemMessage as string
+        const rememberIntermediateSteps = nodeData.inputs?.rememberIntermediateSteps as boolean
 
         let tools = nodeData.inputs?.tools
         tools = flatten(tools)
@@ -59,7 +67,8 @@ class ConversationalRetrievalAgentToolkit_Agents implements INode {
             verbose: process.env.DEBUG === 'true' ? true : false,
             prefix:
                 systemMessage ??
-                'Do your best to answer the questions. Feel free to use any tools available to look up relevant information, only if necessary. Always list markdown links contained in the corresponding answer of the tool.'
+                'Do your best to answer the questions. Feel free to use any tools available to look up relevant information, only if necessary. Always list markdown links contained in the corresponding answer of the tool.',
+            rememberIntermediateSteps
         })
         return executor
     }
