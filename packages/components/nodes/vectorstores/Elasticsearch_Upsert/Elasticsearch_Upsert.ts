@@ -19,7 +19,7 @@ class ElasticsearchUpsert_VectorStores implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Elasticsearch Upsert Document'
+        this.label = 'Elasticsearch Upsert Document (Legacy)'
         this.name = 'elasticsearchUpsertDocument'
         this.version = 1.0
         this.type = 'Elasticsearch'

@@ -17,7 +17,7 @@ class Elasticsearch_Existing_VectorStores implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Elasticsearch Load Existing Index'
+        this.label = 'Elasticsearch Load Existing Index (Legacy)'
         this.name = 'elasticsearchExistingIndex'
         this.version = 1.0
         this.type = 'Elasticsearch'
