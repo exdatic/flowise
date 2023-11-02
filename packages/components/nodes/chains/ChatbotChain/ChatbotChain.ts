@@ -10,7 +10,7 @@ import { Document } from 'langchain/document'
 
 const defaultSystemMessage = `The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.`
 
-class HolidAIChain_Chains implements INode {
+class ChatbotChain_Chains implements INode {
     label: string
     name: string
     version: number
@@ -22,13 +22,13 @@ class HolidAIChain_Chains implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'HolidAI Chain'
-        this.name = 'holidAIChain'
+        this.label = 'Chatbot Chain'
+        this.name = 'chatbotChain'
         this.version = 1.0
         this.type = 'ConversationChain'
         this.icon = 'chain.svg'
         this.category = 'Chains'
-        this.description = 'HolidAI specific conversational chain with memory'
+        this.description = 'Chat models specific conversational chain with memory'
         this.baseClasses = [this.type, ...getBaseClasses(ConversationChain)]
         this.inputs = [
             {
@@ -57,7 +57,7 @@ class HolidAIChain_Chains implements INode {
                 rows: 4,
                 additionalParams: true,
                 optional: true,
-                placeholder: 'You are a helpful assistant that write codes'
+                placeholder: defaultSystemMessage
             }
         ]
     }
@@ -136,4 +136,4 @@ class HolidAIChain_Chains implements INode {
     }
 }
 
-module.exports = { nodeClass: HolidAIChain_Chains }
+module.exports = { nodeClass: ChatbotChain_Chains }
