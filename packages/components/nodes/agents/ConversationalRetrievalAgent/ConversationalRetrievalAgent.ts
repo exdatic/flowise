@@ -42,7 +42,7 @@ class ConversationalRetrievalAgent_Agents implements INode {
             {
                 label: 'OpenAI Chat Model',
                 name: 'model',
-                type: 'ChatOpenAI'
+                type: 'BaseChatModel'
             },
             {
                 label: 'System Message',
