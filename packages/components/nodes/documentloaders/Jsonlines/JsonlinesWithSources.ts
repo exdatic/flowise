@@ -1,8 +1,9 @@
 import { INode, INodeData, INodeParams } from '../../../src/Interface'
 import { TextSplitter } from 'langchain/text_splitter'
-import { JSONLinesLoader } from './JSONLinesLoader'
+// import { JSONLinesLoader } from 'langchain/document_loaders/fs/json'
+import { JsonlinesWithSourceLoader } from './JsonlinesWithSourcesLoader'
 
-class Jsonlines_DocumentLoaders implements INode {
+class JsonlinesWithSources_DocumentLoaders implements INode {
     label: string
     name: string
     version: number
@@ -14,13 +15,13 @@ class Jsonlines_DocumentLoaders implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Json Lines File'
-        this.name = 'jsonlinesFile'
+        this.label = 'Json Lines File with Sources'
+        this.name = 'jsonlinesFileWithSources'
         this.version = 1.0
         this.type = 'Document'
         this.icon = 'jsonlines.svg'
         this.category = 'Document Loaders'
-        this.description = `Load data from JSON Lines files`
+        this.description = `Load data from JSON Lines files with sources`
         this.baseClasses = [this.type]
         this.inputs = [
             {
@@ -43,6 +44,22 @@ class Jsonlines_DocumentLoaders implements INode {
                 optional: false
             },
             {
+                label: 'Source Pointer Extraction',
+                name: 'sourcePointerName',
+                type: 'string',
+                placeholder: 'Enter source pointer name',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Title Pointer Extraction',
+                name: 'titlePointerName',
+                type: 'string',
+                placeholder: 'Enter title pointer name',
+                optional: true,
+                additionalParams: true
+            },
+            {
                 label: 'Metadata',
                 name: 'metadata',
                 type: 'json',
@@ -56,12 +73,16 @@ class Jsonlines_DocumentLoaders implements INode {
         const textSplitter = nodeData.inputs?.textSplitter as TextSplitter
         const jsonLinesFileBase64 = nodeData.inputs?.jsonlinesFile as string
         const pointerName = nodeData.inputs?.pointerName as string
+        const sourcePointerName = nodeData.inputs?.sourcePointerName as string
+        const titlePointerName = nodeData.inputs?.titlePointerName as string
         const metadata = nodeData.inputs?.metadata
 
         let alldocs = []
         let files: string[] = []
 
         let pointer = '/' + pointerName.trim()
+        let sourcePointer = sourcePointerName ? '/' + sourcePointerName.trim() : undefined
+        let titlePointer = titlePointerName ? '/' + titlePointerName.trim() : undefined
 
         if (jsonLinesFileBase64.startsWith('[') && jsonLinesFileBase64.endsWith(']')) {
             files = JSON.parse(jsonLinesFileBase64)
@@ -74,7 +95,7 @@ class Jsonlines_DocumentLoaders implements INode {
             splitDataURI.pop()
             const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
             const blob = new Blob([bf])
-            const loader = new JSONLinesLoader(blob, pointer)
+            const loader = new JsonlinesWithSourceLoader(blob, pointer, sourcePointer, titlePointer)
 
             if (textSplitter) {
                 const docs = await loader.loadAndSplit(textSplitter)
@@ -105,4 +126,4 @@ class Jsonlines_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Jsonlines_DocumentLoaders }
+module.exports = { nodeClass: JsonlinesWithSources_DocumentLoaders }
