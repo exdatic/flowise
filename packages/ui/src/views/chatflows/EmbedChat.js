@@ -49,7 +49,7 @@ const embedPopupHtmlCode = (chatflowid) => {
 }
 
 const embedPopupReactCode = (chatflowid) => {
-    return `import { BubbleChat } from 'flowise-embed-react'
+    return `import { BubbleChat } from '@exdatic/flowise-embed-react'
 
 const App = () => {
     return (
@@ -70,7 +70,7 @@ const embedFullpageHtmlCode = (chatflowid) => {
 }
 
 const embedFullpageReactCode = (chatflowid) => {
-    return `import { FullPageChat } from "flowise-embed-react"
+    return `import { FullPageChat } from "@exdatic/flowise-embed-react"
 
 const App = () => {
     return (
@@ -176,7 +176,7 @@ const embedPopupHtmlCodeCustomization = (chatflowid) => {
 }
 
 const embedPopupReactCodeCustomization = (chatflowid) => {
-    return `import { BubbleChat } from 'flowise-embed-react'
+    return `import { BubbleChat } from '@exdatic/flowise-embed-react'
 
 const App = () => {
     return (
@@ -207,7 +207,7 @@ const embedFullpageHtmlCodeCustomization = (chatflowid) => {
 }
 
 const embedFullpageReactCodeCustomization = (chatflowid) => {
-    return `import { FullPageChat } from "flowise-embed-react"
+    return `import { FullPageChat } from "@exdatic/flowise-embed-react"
 
 const App = () => {
     return (
