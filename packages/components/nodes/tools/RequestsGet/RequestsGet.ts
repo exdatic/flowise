@@ -48,6 +48,14 @@ class RequestsGet_Tools implements INode {
                 type: 'json',
                 additionalParams: true,
                 optional: true
+            },
+            {
+                label: 'Max Output Length',
+                name: 'maxOutputLength',
+                type: 'number',
+                additionalParams: true,
+                optional: true,
+                default: 2000
             }
         ]
     }
@@ -56,10 +64,12 @@ class RequestsGet_Tools implements INode {
         const headers = nodeData.inputs?.headers as string
         const url = nodeData.inputs?.url as string
         const description = nodeData.inputs?.description as string
+        const maxOutputLength = nodeData.inputs?.maxOutputLength as number
 
         const obj: RequestParameters = {}
         if (url) obj.url = url
         if (description) obj.description = description
+        if (maxOutputLength) obj.maxOutputLength = maxOutputLength
         if (headers) {
             const parsedHeaders = typeof headers === 'object' ? headers : JSON.parse(headers)
             obj.headers = parsedHeaders
