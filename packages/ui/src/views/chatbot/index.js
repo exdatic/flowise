@@ -81,6 +81,7 @@ const ChatbotFull = () => {
                     const parsedConfig = JSON.parse(chatflowData.chatbotConfig)
                     setChatbotTheme(parsedConfig)
                     if (parsedConfig.overrideConfig) {
+                        parsedConfig.isFullPage = true
                         // Generate new sessionId
                         if (parsedConfig.overrideConfig.generateNewSession) {
                             parsedConfig.overrideConfig.sessionId = Date.now().toString()
