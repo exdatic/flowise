@@ -1,6 +1,6 @@
 {
-    "name": "@exdatic/flowise",
-    "version": "23.11.1",
+    "name": "flowise",
+    "version": "23.11.2",
     "private": true,
     "homepage": "https://flowiseai.com",
     "workspaces": [
