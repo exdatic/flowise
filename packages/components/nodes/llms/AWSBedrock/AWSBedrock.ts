@@ -135,7 +135,8 @@ class AWSBedrock_LLMs implements INode {
             model: iModel,
             region: iRegion,
             temperature: parseFloat(iTemperature),
-            maxTokens: parseInt(iMax_tokens_to_sample, 10)
+            maxTokens: parseInt(iMax_tokens_to_sample, 10),
+            streaming: true
         }
 
         /**
