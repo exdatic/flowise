@@ -8,7 +8,7 @@ import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from 
 import { flatten } from 'lodash'
 import { Document } from 'langchain/document'
 
-let systemMessage = `The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.`
+const defaultSystemMessage = `The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.`
 
 class ConversationChain_Chains implements INode {
     label: string
@@ -57,7 +57,7 @@ class ConversationChain_Chains implements INode {
                 rows: 4,
                 additionalParams: true,
                 optional: true,
-                placeholder: 'You are a helpful assistant that write codes'
+                placeholder: defaultSystemMessage
             }
         ]
     }
@@ -65,15 +65,13 @@ class ConversationChain_Chains implements INode {
     async init(nodeData: INodeData): Promise<any> {
         const model = nodeData.inputs?.model as BaseChatModel
         const memory = nodeData.inputs?.memory as BufferMemory
-        const prompt = nodeData.inputs?.systemMessagePrompt as string
+        const systemMessagePrompt = nodeData.inputs?.systemMessagePrompt as string
         const docs = nodeData.inputs?.document as Document[]
 
         const flattenDocs = docs && docs.length ? flatten(docs) : []
         const finalDocs = []
         for (let i = 0; i < flattenDocs.length; i += 1) {
-            if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                finalDocs.push(new Document(flattenDocs[i]))
-            }
+            finalDocs.push(new Document(flattenDocs[i]))
         }
 
         let finalText = ''
@@ -84,20 +82,29 @@ class ConversationChain_Chains implements INode {
         const replaceChar: string[] = ['{', '}']
         for (const char of replaceChar) finalText = finalText.replaceAll(char, '')
 
-        if (finalText) systemMessage = `${systemMessage}\nThe AI has the following context:\n${finalText}`
+        let systemMessage = ''
+        if (systemMessagePrompt) {
+            systemMessage = systemMessagePrompt
+        } else {
+            systemMessage = defaultSystemMessage
+        }
+
+        if (finalText) {
+            systemMessage += `\nContext:\n${finalText}`
+        }
+
+        const prompt = ChatPromptTemplate.fromMessages([
+            SystemMessagePromptTemplate.fromTemplate(systemMessage),
+            new MessagesPlaceholder(memory.memoryKey ?? 'chat_history'),
+            HumanMessagePromptTemplate.fromTemplate('{input}')
+        ])
 
         const obj: any = {
             llm: model,
             memory,
+            prompt,
             verbose: process.env.DEBUG === 'true' ? true : false
         }
-
-        const chatPrompt = ChatPromptTemplate.fromMessages([
-            SystemMessagePromptTemplate.fromTemplate(prompt ? `${prompt}\n${systemMessage}` : systemMessage),
-            new MessagesPlaceholder(memory.memoryKey ?? 'chat_history'),
-            HumanMessagePromptTemplate.fromTemplate('{input}')
-        ])
-        obj.prompt = chatPrompt
 
         const chain = new ConversationChain(obj)
         return chain
