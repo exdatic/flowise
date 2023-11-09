@@ -1,5 +1,6 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai'
-import { BaseChatMemory, BaseChatMemoryInput, InputValues, MemoryVariables, getBufferString } from 'langchain/memory'
+import { BaseChatMemory, BaseChatMemoryInput, InputValues, MemoryVariables, getBufferString, getInputValue } from 'langchain/memory'
+import { HumanMessage } from 'langchain/schema'
 
 export interface OpenAITokenBufferMemoryInput extends BaseChatMemoryInput {
     llm: ChatOpenAI
@@ -38,10 +39,17 @@ export class OpenAITokenBufferMemory extends BaseChatMemory implements OpenAITok
         return [this.memoryKey]
     }
 
-    async loadMemoryVariables(_values: InputValues): Promise<MemoryVariables> {
+    async loadMemoryVariables(inputValues: InputValues): Promise<MemoryVariables> {
         const messages = [...(await this.chatHistory.getMessages())]
-        while ((await this.llm.getNumTokensFromMessages(messages)).totalCount > this.maxTokenLimit) {
-            messages.shift()
+        const messagesWithInput = [...messages, new HumanMessage(getInputValue(inputValues))]
+        const counts = (await this.llm.getNumTokensFromMessages(messagesWithInput)).countPerMessage
+        for (let i = 0; i < messages.length; i++) {
+            const totalCount = counts.slice(i, counts.length).reduce((a, b) => a + b, 0)
+            if (totalCount > this.maxTokenLimit) {
+                messages.shift()
+            } else {
+                break
+            }
         }
 
         if (this.returnMessages) {

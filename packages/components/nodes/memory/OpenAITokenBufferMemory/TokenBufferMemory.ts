@@ -3,7 +3,7 @@ import { INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src/utils'
 import { OpenAITokenBufferMemory } from './OpenAITokenBufferMemory'
 
-class OpenAITokenBufferMemory_Memory implements INode {
+class TokenBufferMemory_Memory implements INode {
     label: string
     name: string
     version: number
@@ -66,4 +66,4 @@ class OpenAITokenBufferMemory_Memory implements INode {
     }
 }
 
-module.exports = { nodeClass: OpenAITokenBufferMemory_Memory }
+module.exports = { nodeClass: TokenBufferMemory_Memory }
