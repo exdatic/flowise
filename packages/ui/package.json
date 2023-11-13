@@ -1,6 +1,6 @@
 {
     "name": "flowise-ui",
-    "version": "23.11.4",
+    "version": "23.11.5",
     "license": "SEE LICENSE IN LICENSE.md",
     "homepage": "https://flowiseai.com",
     "author": {
@@ -16,7 +16,7 @@
         "@mui/x-data-grid": "^6.8.0",
         "@tabler/icons": "^1.39.1",
         "clsx": "^1.1.1",
-        "@exdatic/flowise-embed": "23.11.2",
+        "@exdatic/flowise-embed": "23.11.3",
         "@exdatic/flowise-embed-react": "23.11.2",
         "flowise-react-json-view": "*",
         "formik": "^2.2.6",

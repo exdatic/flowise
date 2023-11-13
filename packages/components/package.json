@@ -1,6 +1,6 @@
 {
     "name": "flowise-components",
-    "version": "23.11.4",
+    "version": "23.11.5",
     "description": "Flowiseai Components",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
@@ -48,8 +48,8 @@
         "graphql": "^16.6.0",
         "html-to-text": "^9.0.5",
         "ioredis": "^5.3.2",
-        "langchain": "^0.0.183",
-        "langfuse-langchain": "^1.0.14-alpha.0",
+        "langchain": "^0.0.185",
+        "langfuse-langchain": "^1.0.30",
         "langsmith": "^0.0.32",
         "linkifyjs": "^4.1.1",
         "llmonitor": "^0.5.5",
