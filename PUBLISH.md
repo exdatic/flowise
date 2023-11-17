@@ -73,6 +73,12 @@ npm publish --access public
 
 The `--access public` flag is necessary if you are publishing a scoped package publicly for the first time. If you don't include this flag, npm will default to publishing the package as private, which requires a paid npm subscription.
 
+#### Publish a package
+
+```bash
+npm unpublish @exdatic/flowise@<version>
+```
+
 ### Step 4: Verify the publication
 
 After publishing, you should verify that the package is now available on npm.
