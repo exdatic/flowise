@@ -16,7 +16,7 @@
         "@mui/x-data-grid": "^6.8.0",
         "@tabler/icons": "^1.39.1",
         "clsx": "^1.1.1",
-        "@exdatic/flowise-embed": "1.0.15-2",
+        "@exdatic/flowise-embed": "1.0.16-2",
         "@exdatic/flowise-embed-react": "1.0.2-1",
         "flowise-react-json-view": "*",
         "formik": "^2.2.6",
