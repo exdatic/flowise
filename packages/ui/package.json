@@ -23,7 +23,7 @@
         "@uiw/codemirror-theme-vscode": "^4.21.21",
         "@uiw/react-codemirror": "^4.21.21",
         "clsx": "^1.1.1",
-        "@exdatic/flowise-embed": "1.0.18-2",
+        "@exdatic/flowise-embed": "1.0.19-1",
         "@exdatic/flowise-embed-react": "1.0.2-1",
         "flowise-react-json-view": "*",
         "formik": "^2.2.6",
