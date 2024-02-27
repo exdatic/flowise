@@ -55,6 +55,14 @@ class Retriever_Tools implements INode {
                 optional: true
             },
             {
+                label: 'Tool Input Description',
+                name: 'toolInputDescription',
+                type: 'string',
+                description: 'Description for the tool input',
+                optional: true,
+                additionalParams: true
+            },
+            {
                 label: 'Return Source Links',
                 name: 'returnSourceLinks',
                 type: 'boolean',
@@ -70,6 +78,7 @@ class Retriever_Tools implements INode {
         const description = nodeData.inputs?.description as string
         const retriever = nodeData.inputs?.retriever as BaseRetriever
         const returnSourceDocuments = nodeData.inputs?.returnSourceDocuments as boolean
+        const toolInputDescription = nodeData.inputs?.toolInputDescription as string
         const returnSourceLinks = nodeData.inputs?.returnSourceLinks as boolean
 
         const input = {
@@ -85,7 +94,7 @@ class Retriever_Tools implements INode {
         }
 
         const schema = z.object({
-            input: z.string().describe('query to look up in retriever')
+            input: z.string().describe(toolInputDescription || 'query to look up in retriever')
         })
 
         const tool = new DynamicStructuredTool({ ...input, func, schema })
