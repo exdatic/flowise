@@ -1,6 +1,6 @@
 {
     "name": "flowise",
-    "version": "1.5.0-1",
+    "version": "1.6.0-1",
     "private": true,
     "homepage": "https://flowiseai.com",
     "workspaces": [
@@ -53,6 +53,9 @@
     },
     "engines": {
         "node": ">=18.15.0"
+    },
+    "resolutions": {
+        "@qdrant/openapi-typescript-fetch": "1.2.1"
     },
     "repository": {
         "type": "git",
