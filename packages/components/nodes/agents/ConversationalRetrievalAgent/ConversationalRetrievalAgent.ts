@@ -59,6 +59,13 @@ class ConversationalRetrievalAgent_Agents implements INode {
                 rows: 4,
                 optional: true,
                 additionalParams: true
+            },
+            {
+                label: 'Return Result Object',
+                name: 'returnResultObject',
+                type: 'boolean',
+                optional: true,
+                additionalParams: true
             }
         ]
         this.sessionId = fields?.sessionId
@@ -68,7 +75,7 @@ class ConversationalRetrievalAgent_Agents implements INode {
         return prepareAgent(nodeData, { sessionId: this.sessionId, chatId: options.chatId, input }, options.chatHistory)
     }
 
-    async run(nodeData: INodeData, input: string, options: ICommonObject): Promise<string> {
+    async run(nodeData: INodeData, input: string, options: ICommonObject): Promise<any> {
         const memory = nodeData.inputs?.memory as FlowiseMemory
         const executor = prepareAgent(nodeData, { sessionId: this.sessionId, chatId: options.chatId, input }, options.chatHistory)
 
@@ -98,7 +105,8 @@ class ConversationalRetrievalAgent_Agents implements INode {
             this.sessionId
         )
 
-        return res?.output
+        const returnResultObject = nodeData.inputs?.returnResultObject as boolean
+        return returnResultObject ? res : res?.output
     }
 }
 
