@@ -53,6 +53,14 @@ class Retriever_Tools implements INode {
                 name: 'returnSourceDocuments',
                 type: 'boolean',
                 optional: true
+            },
+            {
+                label: 'Return Source Links',
+                name: 'returnSourceLinks',
+                type: 'boolean',
+                optional: true,
+                default: false,
+                additionalParams: true
             }
         ]
     }
@@ -62,6 +70,7 @@ class Retriever_Tools implements INode {
         const description = nodeData.inputs?.description as string
         const retriever = nodeData.inputs?.retriever as BaseRetriever
         const returnSourceDocuments = nodeData.inputs?.returnSourceDocuments as boolean
+        const returnSourceLinks = nodeData.inputs?.returnSourceLinks as boolean
 
         const input = {
             name,
@@ -70,7 +79,7 @@ class Retriever_Tools implements INode {
 
         const func = async ({ input }: { input: string }, runManager?: CallbackManagerForToolRun) => {
             const docs = await retriever.getRelevantDocuments(input, runManager?.getChild('retriever'))
-            const content = docs.map((doc) => doc.pageContent).join('\n\n')
+            const content = docs.map((doc) => processDocToContent(doc, returnSourceLinks)).join('\n\n')
             const sourceDocuments = JSON.stringify(docs)
             return returnSourceDocuments ? content + SOURCE_DOCUMENTS_PREFIX + sourceDocuments : content
         }
@@ -82,6 +91,30 @@ class Retriever_Tools implements INode {
         const tool = new DynamicStructuredTool({ ...input, func, schema })
         return tool
     }
+}
+
+export const isValidURL = (url: string) => {
+    try {
+        return new URL(url)
+    } catch (err) {
+        return undefined
+    }
+}
+
+const processDocToContent = (doc: any, returnSourceLinks: boolean) => {
+    const content = doc.pageContent
+    if (returnSourceLinks) {
+        const url = isValidURL(doc.metadata.source)
+        if (url) {
+            const title = doc.metadata.title
+            if (title) {
+                return `[${title}](${url})\n${content}`
+            } else {
+                return `[](${url})\n${content}`
+            }
+        }
+    }
+    return content
 }
 
 module.exports = { nodeClass: Retriever_Tools }
