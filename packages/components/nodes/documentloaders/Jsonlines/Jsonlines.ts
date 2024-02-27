@@ -1,6 +1,6 @@
 import { INode, INodeData, INodeParams } from '../../../src/Interface'
 import { TextSplitter } from 'langchain/text_splitter'
-import { JSONLinesLoader } from './JSONLinesLoader'
+import { JSONLinesLoader } from 'langchain/document_loaders/fs/json'
 
 class Jsonlines_DocumentLoaders implements INode {
     label: string
