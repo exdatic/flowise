@@ -64,9 +64,5 @@
     },
     "resolutions": {
         "@qdrant/openapi-typescript-fetch": "1.2.1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/exdatic/flowise.git"
     }
 }
