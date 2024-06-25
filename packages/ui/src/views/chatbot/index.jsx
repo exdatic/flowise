@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FullPageChat } from '@exdatic/flowise-embed-react'
+import { FullPageChat } from 'flowise-embed-react'
 import { useNavigate } from 'react-router-dom'
 
 // Project import
@@ -81,7 +81,6 @@ const ChatbotFull = () => {
                     const parsedConfig = JSON.parse(chatflowData.chatbotConfig)
                     setChatbotTheme(parsedConfig)
                     if (parsedConfig.overrideConfig) {
-                        parsedConfig.isFullPage = true
                         // Generate new sessionId
                         if (parsedConfig.overrideConfig.generateNewSession) {
                             parsedConfig.overrideConfig.sessionId = Date.now().toString()
