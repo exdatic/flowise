@@ -66,6 +66,13 @@ class ToolAgent_Agents implements INode {
                 additionalParams: true
             },
             {
+                label: 'Return Result Object',
+                name: 'returnResultObject',
+                type: 'boolean',
+                optional: true,
+                additionalParams: true
+            },
+            {
                 label: 'Input Moderation',
                 description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
                 name: 'inputModeration',
@@ -172,6 +179,10 @@ class ToolAgent_Agents implements INode {
                 finalRes.usedTools = usedTools
             }
             return finalRes
+        }
+
+        if (nodeData.inputs?.returnResultObject as boolean) {
+            return res
         }
 
         return finalRes
