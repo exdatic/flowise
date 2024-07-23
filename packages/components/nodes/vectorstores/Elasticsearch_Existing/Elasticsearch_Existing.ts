@@ -1,6 +1,6 @@
 import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { ElasticVectorSearch } from 'langchain/vectorstores/elasticsearch'
-import { Embeddings } from 'langchain/embeddings/base'
+import { ElasticVectorSearch } from '@langchain/community/vectorstores/elasticsearch'
+import { Embeddings } from '@langchain/core/embeddings'
 import { Client } from '@elastic/elasticsearch'
 import { getBaseClasses } from '../../../src/utils'
 
