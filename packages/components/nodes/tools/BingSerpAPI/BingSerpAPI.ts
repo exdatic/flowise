@@ -1,6 +1,6 @@
 import { INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src/utils'
-import { BingSerpAPI } from 'langchain/tools'
+import { BingSerpAPI } from '@langchain/community/tools/bingserpapi'
 
 class BingSerpAPI_Tools implements INode {
     label: string
