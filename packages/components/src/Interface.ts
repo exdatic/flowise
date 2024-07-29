@@ -153,6 +153,8 @@ export interface INodeCredential {
 export interface IMessage {
     message: string
     type: MessageType
+    role?: MessageType
+    content?: string
 }
 
 export interface IUsedTool {
@@ -206,7 +208,7 @@ export interface ITeamState {
     team_members: string[]
     next: string
     instructions: string
-    summarization: string
+    summarization?: string
 }
 
 export interface ISeqAgentsState {
