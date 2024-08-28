@@ -69,6 +69,14 @@ class Retriever_Tools implements INode {
                 optional: true,
                 default: false,
                 additionalParams: true
+            },
+            {
+                label: 'Return as JSON',
+                name: 'returnAsJson',
+                type: 'boolean',
+                optional: true,
+                default: false,
+                additionalParams: true
             }
         ]
     }
@@ -80,6 +88,7 @@ class Retriever_Tools implements INode {
         const returnSourceDocuments = nodeData.inputs?.returnSourceDocuments as boolean
         const toolInputDescription = nodeData.inputs?.toolInputDescription as string
         const returnSourceLinks = nodeData.inputs?.returnSourceLinks as boolean
+        const returnAsJson = nodeData.inputs?.returnAsJson as boolean
 
         const input = {
             name,
@@ -88,9 +97,15 @@ class Retriever_Tools implements INode {
 
         const func = async ({ input }: { input: string }, runManager?: CallbackManagerForToolRun) => {
             const docs = await retriever.getRelevantDocuments(input, runManager?.getChild('retriever'))
-            const content = docs.map((doc) => processDocToContent(doc, returnSourceLinks)).join('\n\n')
-            const sourceDocuments = JSON.stringify(docs)
-            return returnSourceDocuments ? content + SOURCE_DOCUMENTS_PREFIX + sourceDocuments : content
+            if (returnAsJson) {
+                const content = JSON.stringify(docs.map((doc) => processDocToObject(doc, returnSourceLinks)))
+                const sourceDocuments = JSON.stringify(docs)
+                return returnSourceDocuments ? content + SOURCE_DOCUMENTS_PREFIX + sourceDocuments : content
+            } else {
+                const content = docs.map((doc) => processDocToContent(doc, returnSourceLinks)).join('\n\n')
+                const sourceDocuments = JSON.stringify(docs)
+                return returnSourceDocuments ? content + SOURCE_DOCUMENTS_PREFIX + sourceDocuments : content
+            }
         }
 
         const schema = z.object({
@@ -114,17 +129,47 @@ export const isValidURL = (url: string) => {
 const processDocToContent = (doc: any, returnSourceLinks: boolean) => {
     const content = doc.pageContent
     if (returnSourceLinks) {
-        const url = isValidURL(doc.metadata.source)
-        if (url) {
+        const sourceUrl = isValidURL(doc.metadata.source)
+        if (sourceUrl) {
             const title = doc.metadata.title
             if (title) {
-                return `[${title}](${url})\n${content}`
+                return `[${title}](${sourceUrl})\n${content}`
             } else {
-                return `[](${url})\n${content}`
+                return `[](${sourceUrl})\n${content}`
             }
         }
     }
     return content
+}
+
+const processDocToObject = (doc: any, returnSourceLinks: boolean) => {
+    const object: {
+        source: string
+        title?: string
+        text: string
+        image?: string
+    } = {
+        text: doc.pageContent,
+        source: doc.metadata.source,
+        title: doc.metadata.title
+    }
+
+    if (doc.metadata.image) {
+        object['image'] = `![](${doc.metadata.image})`
+    }
+
+    if (returnSourceLinks) {
+        const sourceUrl = isValidURL(doc.metadata.source)
+        if (sourceUrl) {
+            const title = doc.metadata.title
+            if (title) {
+                object['source'] = `[${title}](${sourceUrl})`
+            } else {
+                object['source'] = `[](${sourceUrl})`
+            }
+        }
+    }
+    return object
 }
 
 module.exports = { nodeClass: Retriever_Tools }
