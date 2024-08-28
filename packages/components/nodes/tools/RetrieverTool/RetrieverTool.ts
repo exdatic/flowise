@@ -71,6 +71,22 @@ class Retriever_Tools implements INode {
                 additionalParams: true
             },
             {
+                label: 'Return Titles',
+                name: 'returnTitles',
+                type: 'boolean',
+                optional: true,
+                default: false,
+                additionalParams: true
+            },
+            {
+                label: 'Return Image Links',
+                name: 'returnImageLinks',
+                type: 'boolean',
+                optional: true,
+                default: false,
+                additionalParams: true
+            },
+            {
                 label: 'Return as JSON',
                 name: 'returnAsJson',
                 type: 'boolean',
@@ -88,6 +104,8 @@ class Retriever_Tools implements INode {
         const returnSourceDocuments = nodeData.inputs?.returnSourceDocuments as boolean
         const toolInputDescription = nodeData.inputs?.toolInputDescription as string
         const returnSourceLinks = nodeData.inputs?.returnSourceLinks as boolean
+        const returnImageLinks = nodeData.inputs?.returnImageLinks as boolean
+        const returnTitles = nodeData.inputs?.returnTitles as boolean
         const returnAsJson = nodeData.inputs?.returnAsJson as boolean
 
         const input = {
@@ -98,11 +116,13 @@ class Retriever_Tools implements INode {
         const func = async ({ input }: { input: string }, runManager?: CallbackManagerForToolRun) => {
             const docs = await retriever.getRelevantDocuments(input, runManager?.getChild('retriever'))
             if (returnAsJson) {
-                const content = JSON.stringify(docs.map((doc) => processDocToObject(doc, returnSourceLinks)))
+                const content = JSON.stringify(
+                    docs.map((doc) => processDocToObject(doc, returnSourceLinks, returnTitles, returnImageLinks))
+                )
                 const sourceDocuments = JSON.stringify(docs)
                 return returnSourceDocuments ? content + SOURCE_DOCUMENTS_PREFIX + sourceDocuments : content
             } else {
-                const content = docs.map((doc) => processDocToContent(doc, returnSourceLinks)).join('\n\n')
+                const content = docs.map((doc) => processDocToContent(doc, returnSourceLinks, returnTitles, returnImageLinks)).join('\n\n')
                 const sourceDocuments = JSON.stringify(docs)
                 return returnSourceDocuments ? content + SOURCE_DOCUMENTS_PREFIX + sourceDocuments : content
             }
@@ -111,7 +131,6 @@ class Retriever_Tools implements INode {
         const schema = z.object({
             input: z.string().describe(toolInputDescription || 'input to look up in retriever')
         }) as any
-
 
         const tool = new DynamicStructuredTool({ ...input, func, schema })
         return tool
@@ -126,38 +145,52 @@ export const isValidURL = (url: string) => {
     }
 }
 
-const processDocToContent = (doc: any, returnSourceLinks: boolean) => {
-    const content = doc.pageContent
+const processDocToContent = (doc: any, returnSourceLinks: boolean, returnTitles: boolean, returnImageLinks: boolean) => {
+    const sections = []
     if (returnSourceLinks) {
         const sourceUrl = isValidURL(doc.metadata.source)
         if (sourceUrl) {
             const title = doc.metadata.title
             if (title) {
-                return `[${title}](${sourceUrl})\n${content}`
+                sections.push(`[${title}](${sourceUrl})`)
             } else {
-                return `[](${sourceUrl})\n${content}`
+                sections.push(`[](${sourceUrl})`)
             }
         }
     }
-    return content
+    if (returnTitles && doc.metadata.title) {
+        sections.push(doc.metadata.title)
+    }
+    sections.push(doc.pageContent)
+    if (returnImageLinks && doc.metadata.image) {
+        const imageUrl = isValidURL(doc.metadata.image)
+        if (imageUrl) {
+            sections.push(`![](${imageUrl})`)
+        }
+    }
+    return sections.join('\n')
 }
 
-const processDocToObject = (doc: any, returnSourceLinks: boolean) => {
+const processDocToObject = (doc: any, returnSourceLinks: boolean, returnTitles: boolean, returnImageLinks: boolean) => {
     const object: {
         source: string
         title?: string
         text: string
         image?: string
     } = {
-        text: doc.pageContent,
         source: doc.metadata.source,
-        title: doc.metadata.title
+        text: doc.pageContent
     }
 
-    if (doc.metadata.image) {
-        object['image'] = `![](${doc.metadata.image})`
+    if (returnTitles && doc.metadata.title) {
+        object['title'] = doc.metadata.title
     }
-
+    if (returnImageLinks && doc.metadata.image) {
+        const imageUrl = isValidURL(doc.metadata.image)
+        if (imageUrl) {
+            object['image'] = `![](${imageUrl})`
+        }
+    }
     if (returnSourceLinks) {
         const sourceUrl = isValidURL(doc.metadata.source)
         if (sourceUrl) {
